@@ -22,6 +22,37 @@ import {
   Lightbulb
 } from "lucide-react";
 
+const ROLES = [
+  {
+    role: "开发者",
+    subtitle: "Developer",
+    icon: <Settings className="w-5 h-5" />,
+    color: "text-emerald-600",
+    skills: ["vercel-react-best-practices", "anthropics/skills", "systematic-debugging", "mcp-builder"]
+  },
+  {
+    role: "产品经理",
+    subtitle: "Product Manager",
+    icon: <Search className="w-5 h-5" />,
+    color: "text-blue-600",
+    skills: ["prd", "brainstorming", "seo-audit", "agent-browser", "analytics-tracking"]
+  },
+  {
+    role: "设计师",
+    subtitle: "Designer",
+    icon: <Palette className="w-5 h-5" />,
+    color: "text-purple-600",
+    skills: ["frontend-design", "web-design-guidelines", "ui-ux-pro-max", "theme-factory"]
+  },
+  {
+    role: "运营/市场",
+    subtitle: "Marketing & Ops",
+    icon: <Rocket className="w-5 h-5" />,
+    color: "text-orange-600",
+    skills: ["marketingskills (23个全装)", "copywriting", "launch-strategy", "social-content"]
+  }
+];
+
 const PHASES = [
   {
     id: "phase-1",
@@ -35,6 +66,7 @@ const PHASES = [
       { rank: "#79", name: "writing-plans", author: "obra/superpowers", installs: "43.1K", value: "执行前先写计划，防止跑偏", usage: "写 PRD 前先生成文档大纲草稿，再逐块填充细节" },
       { rank: "#240", name: "prd", author: "github/awesome-copilot", installs: "12.4K", value: "专用 PRD 生成器", usage: "输入\"一句话功能描述\"，自动生成完整 PRD 框架，初稿时间从2小时压缩到15分钟" },
       { rank: "#253", name: "planning-with-files", author: "othmanadi", installs: "11.7K", value: "把文档转化为可执行计划", usage: "上传用户访谈文字稿，提炼痛点并生成需求优先级矩阵" },
+      { rank: "#NEW", name: "agent-browser", author: "anthropics/skills", installs: "15.2K", value: "AI 驱动的浏览器自动化", usage: "自动化执行竞品调研、数据抓取和交互测试，极大提升 PM 调研效率" },
     ]
   },
   {
@@ -125,7 +157,7 @@ const PHASES = [
 const OBSERVATIONS = [
   {
     title: "最高价值的 3 个 Skill 包",
-    content: "coreyhaines31/marketingskills（几乎统治了营销/增长/运营阶段）、obra/superpowers（开发与产品思维工作流）、anthropics/skills（设计和文档生产力），建议这三个包直接全量安装。",
+    content: "coreyhaines31/marketingskills（23个全装，统治营销/增长阶段）、obra/superpowers（开发与产品思维工作流）、anthropics/skills（设计和文档生产力）。",
     icon: <Zap className="w-5 h-5 text-yellow-500" />
   },
   {
@@ -135,7 +167,7 @@ const OBSERVATIONS = [
   },
   {
     title: "PM 必装优先级",
-    content: "prd + brainstorming + launch-strategy + analytics-tracking + pricing-strategy，这5个 Skill 覆盖了产品经理80%的高频场景。",
+    content: "prd + brainstorming + agent-browser + analytics-tracking + pricing-strategy，这5个 Skill 覆盖了产品经理80%的高频场景。",
     icon: <Star className="w-5 h-5 text-purple-500" />
   }
 ];
@@ -167,6 +199,43 @@ export default function App() {
             </p>
           </motion.div>
         </header>
+
+        {/* Role-based Quick Access */}
+        <section className="px-8 py-10 bg-gray-50/50 border-b border-gray-100">
+          <div className="flex items-center gap-3 mb-8">
+            <CheckCircle2 className="w-6 h-6 text-blue-600" />
+            <h2 className="text-2xl font-bold">角色化工具箱推荐</h2>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            {ROLES.map((role, idx) => (
+              <motion.div
+                key={role.role}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <div className={`p-2 rounded-lg bg-gray-50 ${role.color}`}>
+                    {role.icon}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-sm">{role.role}</h3>
+                    <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">{role.subtitle}</p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {role.skills.map(s => (
+                    <span key={s} className="text-[10px] bg-gray-50 text-gray-500 px-2 py-1 rounded-md border border-gray-100">
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
 
         {/* Main Content */}
         <main className="px-8 py-12 space-y-16">

@@ -20,7 +20,8 @@ import {
   MessageSquare,
   FileText,
   Lightbulb,
-  ExternalLink
+  ExternalLink,
+  Circle
 } from "lucide-react";
 
 const ROLES = [
@@ -185,6 +186,13 @@ export default function App() {
     }
   };
 
+  const handlePrint = () => {
+    const originalTitle = document.title;
+    document.title = "bufeiskill";
+    window.print();
+    document.title = originalTitle;
+  };
+
   const openSkillDetail = (author: string, name: string) => {
     window.open(`https://skills.sh/${author}/${name}`, '_blank');
   };
@@ -204,6 +212,12 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F7] text-[#1D1D1F] font-sans selection:bg-blue-100 scroll-smooth">
+      <style dangerouslySetInnerHTML={{ __html: `
+        @media print {
+          title { display: none; }
+          head title { display: none; }
+        }
+      ` }} />
       {/* Container with fixed width for infographic feel */}
       <div className="max-w-[750px] mx-auto bg-white shadow-2xl overflow-hidden min-h-screen relative">
         
@@ -214,12 +228,12 @@ export default function App() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-xs font-semibold tracking-wider uppercase text-gray-500 mb-6">
+            <div className="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-xs font-semibold tracking-wider uppercase text-gray-600 mb-6">
               Product Lifecycle Skills Map
             </div>
             <h1 className="text-5xl font-bold tracking-tight mb-4 leading-tight">
               产品全生命周期<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+              <span className="text-[#AE3925]">
                 Skills 地图
               </span>
             </h1>
@@ -232,7 +246,7 @@ export default function App() {
         {/* Role-based Quick Access */}
         <section className="px-8 py-10 bg-gray-50/50 border-b border-gray-100">
           <div className="flex items-center gap-3 mb-8">
-            <CheckCircle2 className="w-6 h-6 text-blue-600" />
+            <CheckCircle2 className="w-6 h-6 text-[#AE3925]" />
             <h2 className="text-2xl font-bold">角色化工具箱推荐</h2>
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -244,14 +258,14 @@ export default function App() {
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1 }}
                 onClick={() => scrollToPhase(role.targetPhase)}
-                className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all cursor-pointer hover:border-blue-200 group/role"
+                className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all cursor-pointer hover:border-[#AE3925]/30 group/role"
               >
                 <div className="flex items-center gap-3 mb-3">
-                  <div className={`p-2 rounded-lg bg-gray-50 ${role.color} group-hover/role:bg-blue-50 transition-colors`}>
+                  <div className={`p-2 rounded-lg bg-gray-50 ${role.color} group-hover/role:bg-gray-100 transition-colors`}>
                     {role.icon}
                   </div>
                   <div>
-                    <h3 className="font-bold text-sm group-hover/role:text-blue-600 transition-colors">{role.role}</h3>
+                    <h3 className="font-bold text-sm group-hover/role:text-[#AE3925] transition-colors">{role.role}</h3>
                     <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">{role.subtitle}</p>
                   </div>
                 </div>
@@ -263,13 +277,13 @@ export default function App() {
                         e.stopPropagation();
                         findSkillAndOpen(s);
                       }}
-                      className="text-[10px] bg-gray-50 text-gray-500 px-2 py-1 rounded-md border border-gray-100 group-hover/role:bg-white group-hover/role:border-blue-100 transition-colors hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200"
+                      className="text-[10px] bg-gray-50 text-gray-600 px-2 py-1 rounded-md border border-gray-100 group-hover/role:bg-white group-hover/role:border-gray-200 transition-colors hover:bg-gray-100 hover:text-[#AE3925] hover:border-[#AE3925]/20"
                     >
                       {s}
                     </span>
                   ))}
                 </div>
-                <div className="mt-4 flex items-center gap-1 text-[10px] font-bold text-blue-500 opacity-0 group-hover/role:opacity-100 transition-opacity">
+                <div className="mt-4 flex items-center gap-1 text-[10px] font-bold text-[#AE3925] opacity-0 group-hover/role:opacity-100 transition-opacity">
                   <span>查看详情</span>
                   <ArrowRight className="w-3 h-3" />
                 </div>
@@ -289,9 +303,6 @@ export default function App() {
                 viewport={{ once: true }}
                 className="flex items-center gap-4 mb-8"
               >
-                <div className={`w-12 h-12 rounded-2xl ${phase.color} flex items-center justify-center text-white shadow-lg shadow-${phase.color.split('-')[1]}-200`}>
-                  {phase.icon}
-                </div>
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-gray-400 tracking-widest uppercase">Phase {phase.number}</span>
@@ -316,10 +327,10 @@ export default function App() {
                   >
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-3">
-                        <span className="text-xs font-mono font-bold text-gray-400 bg-white px-2 py-1 rounded-md border border-gray-100">
+                        <span className="text-xs font-mono font-bold text-gray-500 bg-white px-2 py-1 rounded-md border border-gray-100">
                           {skill.rank}
                         </span>
-                        <h3 className="font-bold text-lg group-hover:text-blue-600 transition-colors">
+                        <h3 className="font-bold text-lg group-hover:text-[#AE3925] transition-colors">
                           `{skill.name}`
                         </h3>
                         <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider">
@@ -327,11 +338,11 @@ export default function App() {
                         </span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1 text-xs font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded-full group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
+                        <div className="flex items-center gap-1 text-xs font-bold text-gray-600 bg-gray-100 px-2 py-1 rounded-full group-hover:bg-gray-50 group-hover:text-[#AE3925] transition-colors">
                           <Download className="w-3 h-3" />
                           {skill.installs}
                         </div>
-                        <div className="p-1.5 rounded-full bg-gray-100 text-gray-400 opacity-0 group-hover:opacity-100 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                        <div className="p-1.5 rounded-full bg-gray-100 text-gray-400 opacity-0 group-hover:opacity-100 group-hover:bg-[#AE3925] group-hover:text-white transition-all duration-300">
                           <ExternalLink className="w-3.5 h-3.5" />
                         </div>
                       </div>
@@ -339,12 +350,12 @@ export default function App() {
                     
                     <div className="grid grid-cols-1 gap-3">
                       <div className="flex items-start gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
-                        <p className="text-sm font-semibold text-gray-700">{skill.value}</p>
+                        <Circle className="w-2.5 h-2.5 text-[#9C9481] mt-1.5 shrink-0" strokeWidth={3} />
+                        <p className="text-sm font-semibold text-gray-800">{skill.value}</p>
                       </div>
                       <div className="flex items-start gap-2 pl-6">
-                        <ArrowRight className="w-3 h-3 text-gray-300 mt-1 shrink-0" />
-                        <p className="text-xs text-gray-500 leading-relaxed">{skill.usage}</p>
+                        <ArrowRight className="w-3 h-3 text-gray-400 mt-1 shrink-0" />
+                        <p className="text-xs text-gray-600 leading-relaxed">{skill.usage}</p>
                       </div>
                     </div>
                   </motion.div>
@@ -356,7 +367,6 @@ export default function App() {
           {/* Key Observations Section */}
           <section className="pt-12 border-t border-gray-100">
             <div className="flex items-center gap-3 mb-8">
-              <Lightbulb className="w-6 h-6 text-yellow-500" />
               <h2 className="text-2xl font-bold">几个关键观察</h2>
             </div>
             
@@ -370,7 +380,6 @@ export default function App() {
                   className="bg-gray-50 rounded-3xl p-6 border border-gray-100"
                 >
                   <div className="flex items-center gap-3 mb-3">
-                    {obs.icon}
                     <h3 className="font-bold text-lg">{obs.title}</h3>
                   </div>
                   <p className="text-sm text-gray-600 leading-relaxed">
@@ -400,7 +409,7 @@ export default function App() {
         {/* Floating Action (Visual only) */}
         <div className="fixed bottom-8 right-8 flex flex-col gap-3 print:hidden">
           <button 
-            onClick={() => window.print()}
+            onClick={handlePrint}
             className="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform active:scale-95"
             title="Print / Save as PDF"
           >

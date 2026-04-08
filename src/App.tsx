@@ -19,7 +19,8 @@ import {
   Globe,
   MessageSquare,
   FileText,
-  Lightbulb
+  Lightbulb,
+  ExternalLink
 } from "lucide-react";
 
 const ROLES = [
@@ -28,28 +29,32 @@ const ROLES = [
     subtitle: "Developer",
     icon: <Settings className="w-5 h-5" />,
     color: "text-emerald-600",
-    skills: ["vercel-react-best-practices", "anthropics/skills", "systematic-debugging", "mcp-builder"]
+    skills: ["vercel-react-best-practices", "anthropics/skills", "systematic-debugging", "mcp-builder"],
+    targetPhase: "phase-3"
   },
   {
     role: "产品经理",
     subtitle: "Product Manager",
     icon: <Search className="w-5 h-5" />,
     color: "text-blue-600",
-    skills: ["prd", "brainstorming", "seo-audit", "agent-browser", "analytics-tracking"]
+    skills: ["prd", "brainstorming", "seo-audit", "agent-browser", "analytics-tracking"],
+    targetPhase: "phase-1"
   },
   {
     role: "设计师",
     subtitle: "Designer",
     icon: <Palette className="w-5 h-5" />,
     color: "text-purple-600",
-    skills: ["frontend-design", "web-design-guidelines", "ui-ux-pro-max", "theme-factory"]
+    skills: ["frontend-design", "web-design-guidelines", "ui-ux-pro-max", "theme-factory"],
+    targetPhase: "phase-2"
   },
   {
     role: "运营/市场",
     subtitle: "Marketing & Ops",
     icon: <Rocket className="w-5 h-5" />,
     color: "text-orange-600",
-    skills: ["marketingskills (23个全装)", "copywriting", "launch-strategy", "social-content"]
+    skills: ["marketingskills", "copywriting", "launch-strategy", "social-content"],
+    targetPhase: "phase-4"
   }
 ];
 
@@ -157,7 +162,7 @@ const PHASES = [
 const OBSERVATIONS = [
   {
     title: "最高价值的 3 个 Skill 包",
-    content: "coreyhaines31/marketingskills（23个全装，统治营销/增长阶段）、obra/superpowers（开发与产品思维工作流）、anthropics/skills（设计和文档生产力）。",
+    content: "coreyhaines31/marketingskills（统治营销/增长阶段）、obra/superpowers（开发与产品思维工作流）、anthropics/skills（设计和文档生产力）。",
     icon: <Zap className="w-5 h-5 text-yellow-500" />
   },
   {
@@ -173,8 +178,32 @@ const OBSERVATIONS = [
 ];
 
 export default function App() {
+  const scrollToPhase = (phaseId: string) => {
+    const element = document.getElementById(phaseId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const openSkillDetail = (author: string, name: string) => {
+    window.open(`https://skills.sh/${author}/${name}`, '_blank');
+  };
+
+  const findSkillAndOpen = (skillName: string) => {
+    // Search through PHASES to find the author
+    for (const phase of PHASES) {
+      const skill = phase.skills.find(s => s.name === skillName || s.name === skillName.split(' ')[0]);
+      if (skill) {
+        openSkillDetail(skill.author, skill.name);
+        return;
+      }
+    }
+    // Fallback if not found in PHASES (e.g. some role-specific skills)
+    // Most skills in ROLES are in PHASES, but some might be generic
+  };
+
   return (
-    <div className="min-h-screen bg-[#F5F5F7] text-[#1D1D1F] font-sans selection:bg-blue-100">
+    <div className="min-h-screen bg-[#F5F5F7] text-[#1D1D1F] font-sans selection:bg-blue-100 scroll-smooth">
       {/* Container with fixed width for infographic feel */}
       <div className="max-w-[750px] mx-auto bg-white shadow-2xl overflow-hidden min-h-screen relative">
         
@@ -214,23 +243,35 @@ export default function App() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1 }}
-                className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
+                onClick={() => scrollToPhase(role.targetPhase)}
+                className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all cursor-pointer hover:border-blue-200 group/role"
               >
                 <div className="flex items-center gap-3 mb-3">
-                  <div className={`p-2 rounded-lg bg-gray-50 ${role.color}`}>
+                  <div className={`p-2 rounded-lg bg-gray-50 ${role.color} group-hover/role:bg-blue-50 transition-colors`}>
                     {role.icon}
                   </div>
                   <div>
-                    <h3 className="font-bold text-sm">{role.role}</h3>
+                    <h3 className="font-bold text-sm group-hover/role:text-blue-600 transition-colors">{role.role}</h3>
                     <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">{role.subtitle}</p>
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {role.skills.map(s => (
-                    <span key={s} className="text-[10px] bg-gray-50 text-gray-500 px-2 py-1 rounded-md border border-gray-100">
+                    <span 
+                      key={s} 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        findSkillAndOpen(s);
+                      }}
+                      className="text-[10px] bg-gray-50 text-gray-500 px-2 py-1 rounded-md border border-gray-100 group-hover/role:bg-white group-hover/role:border-blue-100 transition-colors hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200"
+                    >
                       {s}
                     </span>
                   ))}
+                </div>
+                <div className="mt-4 flex items-center gap-1 text-[10px] font-bold text-blue-500 opacity-0 group-hover/role:opacity-100 transition-opacity">
+                  <span>查看详情</span>
+                  <ArrowRight className="w-3 h-3" />
                 </div>
               </motion.div>
             ))}
@@ -240,7 +281,7 @@ export default function App() {
         {/* Main Content */}
         <main className="px-8 py-12 space-y-16">
           {PHASES.map((phase, phaseIdx) => (
-            <section key={phase.id} className="relative">
+            <section key={phase.id} id={phase.id} className="relative scroll-mt-10">
               {/* Phase Header */}
               <motion.div 
                 initial={{ opacity: 0, x: -20 }}
@@ -270,7 +311,8 @@ export default function App() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: skillIdx * 0.05 }}
-                    className="group bg-gray-50 hover:bg-white hover:shadow-xl hover:shadow-gray-100 transition-all duration-300 rounded-2xl p-5 border border-transparent hover:border-gray-100"
+                    onClick={() => openSkillDetail(skill.author, skill.name)}
+                    className="group bg-gray-50 hover:bg-white hover:shadow-xl hover:shadow-gray-100 transition-all duration-300 rounded-2xl p-5 border border-transparent hover:border-gray-100 cursor-pointer"
                   >
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-3">
@@ -284,9 +326,14 @@ export default function App() {
                           {skill.author}
                         </span>
                       </div>
-                      <div className="flex items-center gap-1 text-xs font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                        <Download className="w-3 h-3" />
-                        {skill.installs}
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1 text-xs font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded-full group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
+                          <Download className="w-3 h-3" />
+                          {skill.installs}
+                        </div>
+                        <div className="p-1.5 rounded-full bg-gray-100 text-gray-400 opacity-0 group-hover:opacity-100 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </div>
                       </div>
                     </div>
                     
